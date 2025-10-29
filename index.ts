@@ -16,7 +16,8 @@ connect();
 // Cấu hình CORS
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3000", // Phải chỉ định tên miền cụ thể
+    credentials: true, // Cho phép gửi cookie
   })
 );
 
