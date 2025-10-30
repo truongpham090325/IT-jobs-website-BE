@@ -3,6 +3,7 @@ import cors from "cors";
 import routes from "./routes/index.route";
 import dotenv from "dotenv";
 import { connect } from "./config/database.config";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const port = 4000;
@@ -23,6 +24,9 @@ app.use(
 
 //Cho phép gửi dữ liệu lên dạng json
 app.use(express.json());
+
+// Cấu hình lấy cookie
+app.use(cookieParser());
 
 // Thiết lập đường dẫn
 app.use("/", routes);
