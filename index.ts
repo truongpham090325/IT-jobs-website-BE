@@ -1,15 +1,17 @@
 import express from "express";
+import dotenv from "dotenv";
+
+// Load biến môi trường từ .env
+dotenv.config();
+
 import cors from "cors";
 import routes from "./routes/index.route";
-import dotenv from "dotenv";
+
 import { connect } from "./config/database.config";
 import cookieParser from "cookie-parser";
 
 const app = express();
 const port = 4000;
-
-// Load biến môi trường từ .env
-dotenv.config();
 
 // Kết nối CSDL
 connect();
