@@ -4,6 +4,15 @@ const schema = new mongoose.Schema(
   {
     companyName: String,
     email: String,
+    address: String,
+    companyModel: String,
+    companyEmployees: String,
+    workingTime: String,
+    workOvertime: String,
+    description: String,
+    logo: String,
+    phone: String,
+    city: String,
     password: String,
   },
   {
