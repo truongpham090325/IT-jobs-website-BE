@@ -20,6 +20,7 @@ router.post("/login", companyValidate.loginPost, companyController.loginPost);
 router.patch(
   "/profile",
   authMiddleware.verifyTokenCompany,
+  companyValidate.profilePatch,
   upload.single("logo"),
   companyController.profilePatch
 );

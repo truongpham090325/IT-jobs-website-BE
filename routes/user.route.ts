@@ -20,6 +20,7 @@ router.post("/login", userValidate.loginPost, userController.loginPost);
 router.patch(
   "/profile",
   authMiddleware.verifyTokenUser,
+  userValidate.profilePatch,
   upload.single("avatar"),
   userController.profilePatch
 );
