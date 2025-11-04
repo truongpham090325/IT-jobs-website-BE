@@ -123,3 +123,41 @@ export const profilePatch = async (
 
   next();
 };
+
+export const createJobPost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const schema = Joi.object({
+    title: Joi.string().required().messages({
+      "string.empty": "Vui lòng nhập tên công việc!",
+    }),
+    salaryMin: Joi.allow(""),
+    salaryMax: Joi.allow(""),
+    position: Joi.string().required().messages({
+      "string.empty": "Vui lòng chọn cấp bậc!",
+    }),
+    workingForm: Joi.string().required().messages({
+      "string.empty": "Vui lòng chọn hình thức làm việc!",
+    }),
+    technologies: Joi.allow(""),
+    images: Joi.string().required().messages({
+      "string.empty": "Vui lòng chọn hình ảnh!",
+    }),
+    description: Joi.allow(""),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    const errorMessage = error.details[0].message;
+
+    res.json({
+      code: "error",
+      message: errorMessage,
+    });
+    return;
+  }
+
+  next();
+};
