@@ -42,6 +42,10 @@ export const search = async (req: Request, res: Response) => {
       find.position = req.query.position;
     }
 
+    if (req.query.workingFrom) {
+      find.workingForm = req.query.workingFrom;
+    }
+
     const jobs = await Job.find(find).sort({
       createdAt: "desc",
     });
