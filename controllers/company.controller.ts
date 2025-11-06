@@ -4,6 +4,7 @@ import AccountCompany from "../models/accounts-company.model";
 import jwt from "jsonwebtoken";
 import { AccountRequest } from "../interfaces/request.interface";
 import Job from "../models/job.model";
+import City from "../models/city.model";
 
 export const registerPost = async (req: Request, res: Response) => {
   const existAccount = await AccountCompany.findOne({
@@ -314,4 +315,45 @@ export const deleteJobDel = async (req: AccountRequest, res: Response) => {
       message: "Dữ liệu không hợp lệ!",
     });
   }
+};
+
+export const list = async (req: Request, res: Response) => {
+  let limitItems = 12;
+  if (req.query.limitItems) {
+    limitItems = parseInt(`${req.query.limitItems}`);
+  }
+
+  const companyList = await AccountCompany.find({}).limit(limitItems);
+
+  const companyListFinal = [];
+
+  for (const item of companyList) {
+    const dataItem = {
+      id: item.id,
+      logo: item.logo,
+      companyName: item.companyName,
+      cityName: "",
+      totalJob: 0,
+    };
+
+    // Thành phố
+    const city = await City.findOne({
+      _id: item.city,
+    });
+    dataItem.cityName = `${city ? city.name : ""}`;
+
+    // Tổng số việc làm
+    const totalJob = await Job.countDocuments({
+      companyId: item.id,
+    });
+    dataItem.totalJob = totalJob;
+
+    companyListFinal.push(dataItem);
+  }
+
+  res.json({
+    code: "success",
+    message: "Thành công",
+    companyList: companyListFinal,
+  });
 };
