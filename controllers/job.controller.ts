@@ -38,7 +38,7 @@ export const detail = async (req: Request, res: Response) => {
       salaryMax: record.salaryMax,
       images: record.images,
       position: record.position,
-      workingFrom: record.workingForm,
+      workingFrom: record.workingFrom,
       companyAddress: companyInfo.address,
       technologies: record.technologies,
       description: companyInfo.description,

@@ -77,7 +77,7 @@ export const search = async (req: Request, res: Response) => {
         salaryMin: item.salaryMin,
         salaryMax: item.salaryMax,
         position: item.position,
-        workingFrom: item.workingForm,
+        workingFrom: item.workingFrom,
         cityName: "",
         technologies: item.technologies,
       };

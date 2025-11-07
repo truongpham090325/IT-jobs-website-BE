@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { AccountRequest } from "../interfaces/request.interface";
 import Job from "../models/job.model";
 import City from "../models/city.model";
+import CV from "../models/cv.model";
 
 export const registerPost = async (req: Request, res: Response) => {
   const existAccount = await AccountCompany.findOne({
@@ -176,7 +177,7 @@ export const listJob = async (req: AccountRequest, res: Response) => {
         salaryMin: item.salaryMin,
         salaryMax: item.salaryMax,
         position: item.position,
-        workingForm: item.workingForm,
+        workingForm: item.workingFrom,
         companyCity: req.account.companyCity,
         technologies: item.technologies,
       });
@@ -421,7 +422,7 @@ export const detail = async (req: Request, res: Response) => {
         salaryMin: item.salaryMin,
         salaryMax: item.salaryMax,
         position: item.position,
-        workingForm: item.workingForm,
+        workingForm: item.workingFrom,
         cityName: city?.name,
         technologies: item.technologies,
       };
@@ -434,6 +435,81 @@ export const detail = async (req: Request, res: Response) => {
       message: "Thành công!",
       companyDetail: companyDetail,
       jobs: dataFinal,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!",
+    });
+  }
+};
+
+export const listCV = async (req: AccountRequest, res: Response) => {
+  try {
+    const companyId = req.account.id;
+
+    const find = {
+      companyId: companyId,
+    };
+
+    // Phân trang
+    const limitItems = 3;
+    let page = 1;
+    if (req.query.page && parseInt(`${req.query.page}`) > 0) {
+      page = parseInt(`${req.query.page}`);
+    }
+    const skip = (page - 1) * limitItems;
+    const totalRecord = await Job.countDocuments(find);
+    const totalPage = Math.ceil(totalRecord / limitItems);
+    // Hết phân trang
+
+    const jobs = await Job.find({
+      companyId: companyId,
+    })
+      .sort({
+        createdAt: "desc",
+      })
+      .limit(limitItems)
+      .skip(skip);
+    const jobListId = jobs.map((item) => item.id);
+
+    const cvs = await CV.find({
+      jobId: { $in: jobListId },
+    }).sort({
+      createdAt: "desc",
+    });
+
+    const dataFinal = [];
+
+    for (const item of cvs) {
+      const jobDetail = await Job.findOne({
+        _id: item.jobId,
+      });
+
+      if (jobDetail) {
+        const itemFinal = {
+          id: item.id,
+          jobTitle: jobDetail.title,
+          fullName: item.fullName,
+          email: item.email,
+          phone: item.phone,
+          jobSalaryMin: jobDetail.salaryMin,
+          jobSalaryMax: jobDetail.salaryMax,
+          jobPosition: jobDetail.position,
+          jobWorkingForm: jobDetail.workingFrom,
+          viewed: item.viewed,
+          status: item.status,
+        };
+
+        dataFinal.push(itemFinal);
+      }
+    }
+
+    res.json({
+      code: "success",
+      message: "Thành công!",
+      cvs: dataFinal,
     });
   } catch (error) {
     console.log(error);
