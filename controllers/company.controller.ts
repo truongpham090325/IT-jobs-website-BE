@@ -318,12 +318,24 @@ export const deleteJobDel = async (req: AccountRequest, res: Response) => {
 };
 
 export const list = async (req: Request, res: Response) => {
+  const find = {};
   let limitItems = 12;
   if (req.query.limitItems) {
     limitItems = parseInt(`${req.query.limitItems}`);
   }
+  // Phân trang
+  let page = 1;
+  if (req.query.page && parseInt(`${req.query.page}`) > 0) {
+    page = parseInt(`${req.query.page}`);
+  }
+  const skip = (page - 1) * limitItems;
+  const totalRecord = await Job.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord / limitItems);
+  // Hết Phân trang
 
-  const companyList = await AccountCompany.find({}).limit(limitItems);
+  const companyList = await AccountCompany.find(find)
+    .limit(limitItems)
+    .skip(skip);
 
   const companyListFinal = [];
 
@@ -355,5 +367,6 @@ export const list = async (req: Request, res: Response) => {
     code: "success",
     message: "Thành công",
     companyList: companyListFinal,
+    totalPage: totalPage,
   });
 };
